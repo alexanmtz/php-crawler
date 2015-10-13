@@ -10,7 +10,7 @@ class Crawler {
 		$this->url = $url;
 		$this->path = $path;
 		$this->header = $header;
-		
+		$this->item;
 		$this->setHeader($header);
 	}
 	
@@ -47,9 +47,20 @@ class Crawler {
 	
 	function CSV() {
 		$header = $this->getHeader();
-		$content = ''; 
 		
-		return $header;
+		if(count($this->item)) {
+			$item = implode(";", $this->item[0]);
+		} else {
+			$item = '';
+		}
+		
+		$content = $item;
+		
+		return $header.'\n'.$content;
+	}
+	
+	function addItem($item) {
+		$this->item[] = $item;
 	}
 }
 

@@ -54,7 +54,18 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 	 	
 	 	$content = $this->crawler->CSV();
 		
-		$this->assertEquals($content, 'UID;CATEGORIES');
+		$this->assertEquals($content, 'UID;CATEGORIES\n');
+	 }
+	 
+	 public function testAddItem() {
+	 	$this->crawler->addItem(array(
+			'uid' => '1234',
+			'categories' => 'cat1'			
+		));
+		
+		$content = $this->crawler->CSV();
+		$this->assertStringStartsWith($content, 'UID;CATEGORIES\n1234;cat1');
+		
 	 }
 }
 ?>
