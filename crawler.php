@@ -6,12 +6,50 @@ class Crawler {
 	
 	public $url;
 	
-	function __construct($url) {
+	function __construct($url, $header = array(), $path = '') {
 		$this->url = $url;
+		$this->path = $path;
+		$this->header = $header;
+		
+		$this->setHeader($header);
 	}
 	
 	function getUrl() {
 		return $this->url;
+	}
+	
+	function getPath() {
+		return $this->path;
+	}
+	
+	function getDom() {
+		
+		$html = new simple_html_dom();
+		
+		if(preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*
+        (:[0-9]+)?(/.*)?$|i', $url)) {
+        	$html->loadFile($url);
+        } else {
+    		$html->load($url);	
+        }
+		
+		return $html;
+	}
+	
+	function setHeader($header) {
+		$this->header = strtoupper(implode(';', $header));
+		return $this->header;
+	}
+	
+	function getHeader() {
+		return $this->header;
+	}
+	
+	function CSV() {
+		$header = $this->getHeader();
+		$content = ''; 
+		
+		return $header;
 	}
 }
 
