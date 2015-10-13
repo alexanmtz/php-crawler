@@ -64,8 +64,43 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		));
 		
 		$content = $this->crawler->CSV();
-		$this->assertStringStartsWith($content, 'UID;CATEGORIES\n1234;cat1');
+		$this->assertEquals($content, 'UID;CATEGORIES\n1234;cat1');
 		
+	 }
+	 
+	 public function testAddTwoItens() {
+	 	$this->crawler->addItem(array(
+			'uid' => '1234',
+			'categories' => 'cat1'			
+		));	
+			
+	 	$this->crawler->addItem(array(
+			'uid' => '5678',
+			'categories' => 'cat2'			
+		));
+		
+		$content = $this->crawler->CSV();
+		var_dump($content);
+		$this->assertEquals($content, 'UID;CATEGORIES\n1234;cat1\n5678;cat2');
+	 }
+	  public function testAddMultipleItens() {
+	 	$this->crawler->addItem(array(
+			'uid' => '1234',
+			'categories' => 'cat1'			
+		));	
+			
+	 	$this->crawler->addItem(array(
+			'uid' => '5678',
+			'categories' => 'cat2'			
+		));
+		
+		$this->crawler->addItem(array(
+			'uid' => '9',
+			'categories' => 'cat3'			
+		));
+		
+		$content = $this->crawler->CSV();
+		$this->assertEquals($content, 'UID;CATEGORIES\n1234;cat1\n5678;cat2\n9;cat3');
 	 }
 }
 ?>
