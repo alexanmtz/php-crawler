@@ -12,6 +12,10 @@ class Crawler {
 		$this->header = $header;
 		$this->item = array();
 		$this->setHeader($header);
+		$this->html = new simple_html_dom();
+		
+		$this->html->load($url);
+		
 	}
 	
 	function getUrl() {
@@ -24,16 +28,21 @@ class Crawler {
 	
 	function getDom() {
 		
-		$html = new simple_html_dom();
+		return $this->html;
+	}
+	
+	function setDomItem($value, $element, $attribute) {
 		
-		if(preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*
-        (:[0-9]+)?(/.*)?$|i', $url)) {
-        	$html->loadFile($url);
-        } else {
-    		$html->load($url);	
-        }
+		$item = array();
 		
-		return $html;
+		$selector = $element.'['.$attribute.'='.'"'.$value.'"]';
+		
+		foreach($this->html->find($selector) as $element) {
+			
+			$item[] = $element->plaintext;
+		}
+		
+		return $item;
 	}
 	
 	function setHeader($header) {

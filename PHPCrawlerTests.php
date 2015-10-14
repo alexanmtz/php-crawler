@@ -34,9 +34,11 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 	 
 	 public function testLoadingDomObject() {
 		
+		$this->crawler = new Crawler('<html><body>Hello!</body></html>', $this->header);
+		
 		$dom = $this->crawler->getDom();
 		
-		//$this->assertEquals($dom, '<html><body>Hello!</body></html>');
+		$this->assertEquals($dom->plaintext, 'Hello!');
 		
 		$this->assertInstanceOf('simple_html_dom', $dom);
 		
@@ -80,7 +82,6 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		));
 		
 		$content = $this->crawler->CSV();
-		var_dump($content);
 		$this->assertEquals($content, 'UID;CATEGORIES\n1234;cat1\n5678;cat2');
 	 }
 	  public function testAddMultipleItens() {
@@ -102,5 +103,19 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		$content = $this->crawler->CSV();
 		$this->assertEquals($content, 'UID;CATEGORIES\n1234;cat1\n5678;cat2\n9;cat3');
 	 }
+	  
+     /*
+	  * Extracting DOM
+	  */
+	  
+	  public function testDomRuleProductContainer() {
+	  	$this->crawler = new Crawler('<html><body><div class="product">item</div></body></html>', $this->header);
+		
+		$item = $this->crawler->setDomItem('product', 'div', 'class');
+		#$item = $this->crawler->getDomItem('product');
+		
+		$this->assertEquals($item[0], 'item');
+		
+	  }
 }
 ?>
