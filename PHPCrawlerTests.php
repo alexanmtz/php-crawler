@@ -109,13 +109,35 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 	  */
 	  
 	  public function testDomRuleProductContainer() {
-	  	$this->crawler = new Crawler('<html><body><div class="product">item</div></body></html>', $this->header);
+	  	$this->crawler = new Crawler('<html><body><div class="products">item</div></body></html>', $this->header);
 		
-		$item = $this->crawler->setDomItem('product', 'div', 'class');
-		#$item = $this->crawler->getDomItem('product');
+		$item = $this->crawler->getDomItem('products', 'div', 'class');
 		
 		$this->assertEquals($item[0], 'item');
 		
 	  }
+	  public function testDomRuleProductItens() {
+  		$this->header = array(
+			
+			'uid', 'name', 'categories'
+		
+		);
+			
+	  	$this->crawler = new Crawler('<html><body><div class="products"><div class="product"><item id="1" category="cat01">title</item></div><div class="product"></div></div></body></html>', $this->header);
+		
+		$item = $this->crawler->getDomItem('product', 'div', 'class');
+		
+		$this->crawler->mapItens(array(array(
+			'uid' => 'item[id]',
+			'name' => 'item[text]',
+			'categories' => 'item[category]' 
+		)));
+		
+		
+		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n1;title;cat01');
+		
+	  }
+
+
 }
 ?>

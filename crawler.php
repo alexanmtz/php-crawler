@@ -31,7 +31,7 @@ class Crawler {
 		return $this->html;
 	}
 	
-	function setDomItem($value, $element, $attribute) {
+	function getDomItem($value, $element, $attribute) {
 		
 		$item = array();
 		
@@ -43,6 +43,26 @@ class Crawler {
 		}
 		
 		return $item;
+	}
+	
+	function mapItens($itens) {
+		
+		$dom = $this->getDom();
+		
+		$uid = $dom->find('item',0)->id;
+		$name = $dom->find('item', 0)->plaintext;
+		$cat = $dom->find('item', 0)->category;
+		
+		$this->addItem(array(
+			'uid' => $uid,
+			'name' => $name,
+			'category' => 'cat01'
+		));
+		
+		foreach($dom as $element) {
+			//print_r($element->find('item[id]'));
+		}
+		
 	}
 	
 	function setHeader($header) {
