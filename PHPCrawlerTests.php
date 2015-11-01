@@ -183,6 +183,31 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n5001121081;BEA Óleo de Cártamo;suplementos-alimentares');
 	  }
+	  
+	   public function testGettingMoreProductsFromRealPage() {
+	  	$this->header = array(
+			
+			'uid', 'name', 'categories'
+		
+		);
+			
+	  	$this->crawler = new Crawler('products.html', $this->header);
+		
+		$this->crawler->limit = 3;
+		
+		$item = $this->crawler->associate('.productList--container .productList--item', array(
+			'uid' => 'data-sku',
+			'name' => array('.productList--item--name','plaintext')
+		));
+		
+		$this->crawler->fill('categories', 'suplementos-alimentares');
+		
+		$result = 'UID;NAME;CATEGORIES\n5001121081;BEA Óleo de Cártamo;suplementos-alimentares\n';
+		$result .= '2791041201;Óleo de Peixe (Validade: 30/11/2015), Consumo: 15 dias;suplementos-alimentares\n';
+		$result .= '2071031161;SB Equilíbrio Abdominal, Goji Berry;suplementos-alimentares';
+		
+		$this->assertEquals($this->crawler->CSV(), $result);
+	  }
 
 
 }

@@ -66,7 +66,6 @@ class Crawler {
 	function associate($root, $map) {
 		
 		$association = array();
-		$item_amount = 0;
 		
 		foreach($this->html->find($root) as $i => $item) {
 			if($i == $this->limit) {
@@ -74,8 +73,8 @@ class Crawler {
 			}
 			foreach($map as $key => $mapped) {
 				if(is_array($mapped)) {
-					$association[$key] = trim($this->html->find($root, $i)->find($mapped[0], $i)->{$mapped[1]});
-					print_r($mapped[1]);
+					$association[$key] = trim($this->html->find($root, $i)->find($mapped[0], 0)->{$mapped[1]});
+					
 				} else {
 					$association[$key] = $this->html->find($root, $i)->{$mapped};
 				}
