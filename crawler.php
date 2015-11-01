@@ -112,6 +112,10 @@ class Crawler {
 		return $header.'\n'.$content;
 	}
 	
+	function generateFile($filename) {
+		return file_put_contents($filename, $this->CSV());
+	}
+	
 	function addItem($item) {
 		$this->item[] = $item;
 	}
