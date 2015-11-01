@@ -44,6 +44,16 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		
 	 }
 	 
+	 public function testLoadingExternalHTMLFile() {
+	 	$this->crawler = new Crawler('hello.html', $this->header);
+		
+		$dom = $this->crawler->getDom();
+		
+		$this->assertEquals($dom->plaintext, 'Hello there!');
+		
+		$this->assertInstanceOf('simple_html_dom', $dom);
+	 }
+	 
 	 public function testParsingHeader() {
 	 	
 		$header_content = $this->crawler->getHeader();
@@ -151,6 +161,27 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n1;title;cat01\n2;title2;cat02');
 		
+	  }
+
+	  public function testGettingProductsFromRealPage() {
+	  	$this->header = array(
+			
+			'uid', 'name', 'categories'
+		
+		);
+			
+	  	$this->crawler = new Crawler('products.html', $this->header);
+		
+		$this->crawler->limit = 1;
+		
+		$item = $this->crawler->associate('.productList--container .productList--item', array(
+			'uid' => 'data-sku',
+			'name' => array('.productList--item--name','plaintext')
+		));
+		
+		$this->crawler->fill('categories', 'suplementos-alimentares');
+		
+		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n5001121081;BEA Óleo de Cártamo;suplementos-alimentares');
 	  }
 
 

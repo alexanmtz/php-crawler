@@ -14,8 +14,13 @@ class Crawler {
 		$this->item = array();
 		$this->setHeader($header);
 		$this->html = new simple_html_dom();
+		$this->limit = 5;
 		
-		$this->html->load($url);
+		if(file_exists($url)) {
+			$this->html = file_get_html($url);
+		} else {
+			$this->html->load($url);
+		}
 		
 	}
 	
@@ -46,14 +51,34 @@ class Crawler {
 		return $item;
 	}
 	
+	function fill($key, $value) {
+		$new = array();
+			
+		foreach($this->item as $item) {
+			$new[] = array_merge( $item, array( $key => $value ) );
+		}
+		
+		$this->item = $new;
+		
+		return $new;
+	}
+	
 	function associate($root, $map) {
 		
 		$association = array();
 		$item_amount = 0;
 		
 		foreach($this->html->find($root) as $i => $item) {
+			if($i == $this->limit) {
+				break;
+			}
 			foreach($map as $key => $mapped) {
-				$association[$key] = $this->html->find($root, $i)->{$mapped};
+				if(is_array($mapped)) {
+					$association[$key] = trim($this->html->find($root, $i)->find($mapped[0], $i)->{$mapped[1]});
+					print_r($mapped[1]);
+				} else {
+					$association[$key] = $this->html->find($root, $i)->{$mapped};
+				}
 			}
 			$this->addItem($association);	
 		}
