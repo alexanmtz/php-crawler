@@ -108,33 +108,48 @@ class CrawlerTest extends PHPUnit_Framework_TestCase
 	  * Extracting DOM
 	  */
 	  
-	  public function testDomRuleProductContainer() {
+	  public function testNode() {
 	  	$this->crawler = new Crawler('<html><body><div class="products">item</div></body></html>', $this->header);
 		
-		$item = $this->crawler->getDomItem('products', 'div', 'class');
+		$item = $this->crawler->query('products', 'div', 'class');
 		
 		$this->assertEquals($item[0], 'item');
 		
 	  }
-	  public function testDomRuleProductItens() {
+	  public function testDomRuleProductItem() {
   		$this->header = array(
 			
 			'uid', 'name', 'categories'
 		
 		);
 			
-	  	$this->crawler = new Crawler('<html><body><div class="products"><div class="product"><item id="1" category="cat01">title</item></div><div class="product"></div></div></body></html>', $this->header);
+	  	$this->crawler = new Crawler('<html><body><div class="products"><div class="product"><item id="1" category="cat01">title</item></div><div class="product">product content</div></div></body></html>', $this->header);
 		
-		$item = $this->crawler->getDomItem('product', 'div', 'class');
-		
-		$this->crawler->mapItens(array(array(
-			'uid' => 'item[id]',
-			'name' => 'item[text]',
-			'categories' => 'item[category]' 
-		)));
-		
+		$item = $this->crawler->associate('div.product > item', array(
+			'uid' => 'id',
+			'name' => 'plaintext',
+			'categories' => 'category',	
+		));
 		
 		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n1;title;cat01');
+		
+	  }
+ 	  public function testDomRuleProductItens() {
+  		$this->header = array(
+			
+			'uid', 'name', 'categories'
+		
+		);
+			
+	  	$this->crawler = new Crawler('<html><body><div class="products"><div class="product"><item id="1" category="cat01">title</item></div><div class="product"><item id="2" category="cat02">title2</item></div></div></body></html>', $this->header);
+		
+		$item = $this->crawler->associate('div.product > item', array(
+			'uid' => 'id',
+			'name' => 'plaintext',
+			'categories' => 'category',	
+		));
+		
+		$this->assertEquals($this->crawler->CSV(), 'UID;NAME;CATEGORIES\n1;title;cat01\n2;title2;cat02');
 		
 	  }
 

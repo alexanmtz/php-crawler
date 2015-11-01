@@ -10,6 +10,7 @@ class Crawler {
 		$this->url = $url;
 		$this->path = $path;
 		$this->header = $header;
+		$this->headerArray = array();
 		$this->item = array();
 		$this->setHeader($header);
 		$this->html = new simple_html_dom();
@@ -31,7 +32,7 @@ class Crawler {
 		return $this->html;
 	}
 	
-	function getDomItem($value, $element, $attribute) {
+	function query($value, $element, $attribute) {
 		
 		$item = array();
 		
@@ -45,29 +46,29 @@ class Crawler {
 		return $item;
 	}
 	
-	function mapItens($itens) {
+	function associate($root, $map) {
 		
-		$dom = $this->getDom();
+		$association = array();
+		$item_amount = 0;
 		
-		$uid = $dom->find('item',0)->id;
-		$name = $dom->find('item', 0)->plaintext;
-		$cat = $dom->find('item', 0)->category;
-		
-		$this->addItem(array(
-			'uid' => $uid,
-			'name' => $name,
-			'category' => 'cat01'
-		));
-		
-		foreach($dom as $element) {
-			//print_r($element->find('item[id]'));
+		foreach($this->html->find($root) as $i => $item) {
+			foreach($map as $key => $mapped) {
+				$association[$key] = $this->html->find($root, $i)->{$mapped};
+			}
+			$this->addItem($association);	
 		}
 		
+		return $association;
 	}
 	
 	function setHeader($header) {
 		$this->header = strtoupper(implode(';', $header));
+		$this->headerArray = $header;
 		return $this->header;
+	}
+	
+	function getHeaderArray() {
+		return $this->headerArray;
 	}
 	
 	function getHeader() {
