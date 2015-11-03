@@ -12,16 +12,16 @@ class Crawler {
 		$this->header = $header;
 		$this->headerArray = array();
 		$this->item = array();
-		$this->setHeader($header);
 		$this->html = new simple_html_dom();
 		$this->limit = 5;
+		$this->separator = ';';
+		$this->setHeader($header);
 		
-		if(file_exists($url)) {
+		if(file_exists($url) || filter_var($url, FILTER_VALIDATE_URL)) {
 			$this->html = file_get_html($url);
 		} else {
-			$this->html->load($url);
+			$this->html = str_get_html($url);
 		}
-		
 	}
 	
 	function getUrl() {
@@ -86,8 +86,12 @@ class Crawler {
 	}
 	
 	function setHeader($header) {
-		$this->header = strtoupper(implode(';', $header));
+		$sep = $this->separator;
+		
+		$this->header = strtoupper(implode($sep, $header));
+		
 		$this->headerArray = $header;
+		
 		return $this->header;
 	}
 	
@@ -99,17 +103,18 @@ class Crawler {
 		return $this->header;
 	}
 	
+	
 	function CSV() {
 		$header = $this->getHeader();
 		$contents = array();
 		
 		foreach($this->item as $i) {
 			$this->addItem($i);
-			$contents[] = implode(";", $i);
+			$contents[] = implode($this->separator, $i);
 		}
 		
-		$content = implode('\n', $contents);
-		return $header.'\n'.$content;
+		$content = implode("\n", $contents);
+		return $header."\n".join("\n", $contents);
 	}
 	
 	function generateFile($filename) {
